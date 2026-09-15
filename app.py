@@ -6,6 +6,22 @@ import plotly.express as px
 import requests
 import streamlit as st
 
+# Larger colour palette for bigger FPL leagues
+FPL_COLOURS = (
+    px.colors.qualitative.Alphabet
+    + px.colors.qualitative.Dark24
+    + px.colors.qualitative.Light24
+)
+
+# Different line styles for additional differentiation
+FPL_LINE_STYLES = [
+    "solid",
+    "dash",
+    "dot",
+    "dashdot",
+    "longdash",
+    "longdashdot",
+]
 
 # ---------------------------------------------------------
 # SETTINGS
@@ -591,7 +607,25 @@ fig = px.line(
     color="Team",
     markers=True,
     title=chart_title,
+    color_discrete_sequence=FPL_COLOURS,
 )
+
+# Give each team a different line style as well
+for i, team in enumerate(selected_teams):
+
+    fig.update_traces(
+        selector={"name": team},
+        line={
+            "dash": FPL_LINE_STYLES[
+                i % len(FPL_LINE_STYLES)
+            ],
+            "width": 2.5,
+        },
+        marker={
+            "size": 7,
+        },
+    )
+
 
 
 fig.update_layout(
@@ -606,11 +640,10 @@ fig.update_layout(
         t=60,
         b=20,
     ),
-)
-
-
-fig.update_xaxes(
-    dtick=1
+    legend=dict(
+        itemclick="toggle",
+        itemdoubleclick="toggleothers",
+    ),
 )
 
 
